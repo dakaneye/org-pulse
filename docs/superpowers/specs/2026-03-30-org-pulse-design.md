@@ -51,7 +51,7 @@ Shells out to `gh api graphql`. Inherits user's existing `gh` auth. Validated on
 
 1. **List repos** — paginated GraphQL query for all org repos. Client-side filter: remove archived, forks, then apply `--repos`/`--exclude-repos`.
 
-2. **Per-repo PR data** — for each repo, fetch PRs updated within the `--weeks` window:
+2. **Per-repo PR data** — for each repo, fetch PRs where `updatedAt >= windowStart` (catches PRs opened before the window that had activity within it):
    - PR metadata: author, created/merged/closed timestamps, state, number, title
    - Reviews: reviewer, submitted timestamp, state (approved/changes_requested/commented)
    - Review requests: requested reviewers and when requested

@@ -6,14 +6,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
+	"strings"
 )
 
-func CheckAuth() error {
-	cmd := exec.Command("gh", "auth", "status")
+// CheckAuth verifies the gh CLI is authenticated by running gh auth status.
+func CheckAuth(ctx context.Context) error {
+	cmd := exec.CommandContext(ctx, "gh", "auth", "status")
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("gh auth check failed: %s", stderr.String())
+		return fmt.Errorf("gh auth check: %s: %w", strings.TrimSpace(stderr.String()), err)
 	}
 	return nil
 }

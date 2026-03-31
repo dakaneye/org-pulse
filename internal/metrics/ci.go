@@ -2,12 +2,14 @@ package metrics
 
 import "github.com/dakaneye/org-pulse/internal/github"
 
+// CIRate holds aggregate CI check run counts and the failure rate as a percentage.
 type CIRate struct {
 	Total    int
 	Failures int
 	Rate     float64
 }
 
+// CIFailureRate computes the CI failure rate across all completed check runs in the given PRs.
 func CIFailureRate(prs []github.PullRequest) CIRate {
 	var total, failures int
 

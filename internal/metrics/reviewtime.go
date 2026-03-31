@@ -6,7 +6,8 @@ import (
 	"github.com/dakaneye/org-pulse/internal/github"
 )
 
-func Median(vals []float64) float64 {
+// median returns the median value of a float64 slice. Returns 0 for empty input.
+func median(vals []float64) float64 {
 	if len(vals) == 0 {
 		return 0
 	}
@@ -21,6 +22,8 @@ func Median(vals []float64) float64 {
 	return sorted[mid]
 }
 
+// MedianTimeToFirstReview returns the median business days from PR creation
+// to the earliest review submission, excluding PRs with no reviews.
 func MedianTimeToFirstReview(prs []github.PullRequest) float64 {
 	var days []float64
 	for _, pr := range prs {
@@ -35,9 +38,11 @@ func MedianTimeToFirstReview(prs []github.PullRequest) float64 {
 		}
 		days = append(days, BusinessDaysBetween(pr.CreatedAt, earliest))
 	}
-	return Median(days)
+	return median(days)
 }
 
+// MedianTimeToMerge returns the median business days from PR creation to merge,
+// excluding unmerged PRs.
 func MedianTimeToMerge(prs []github.PullRequest) float64 {
 	var days []float64
 	for _, pr := range prs {
@@ -46,5 +51,5 @@ func MedianTimeToMerge(prs []github.PullRequest) float64 {
 		}
 		days = append(days, BusinessDaysBetween(pr.CreatedAt, *pr.MergedAt))
 	}
-	return Median(days)
+	return median(days)
 }

@@ -35,6 +35,7 @@ query($org: String!, $cursor: String) {
   }
 }`
 
+// ListRepos returns all repositories in the given GitHub organization, paginating as needed.
 func ListRepos(ctx context.Context, org string) ([]Repo, error) {
 	var all []Repo
 	var cursor string
@@ -74,6 +75,7 @@ func ListRepos(ctx context.Context, org string) ([]Repo, error) {
 	return all, nil
 }
 
+// FilterRepos removes archived and forked repos and applies optional include/exclude name lists.
 func FilterRepos(repos []Repo, include, exclude []string) []Repo {
 	includeSet := toSet(include)
 	excludeSet := toSet(exclude)

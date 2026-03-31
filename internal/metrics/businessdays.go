@@ -1,3 +1,4 @@
+// Package metrics provides pure computation functions for delivery health metrics.
 package metrics
 
 import "time"

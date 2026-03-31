@@ -1,3 +1,4 @@
+// Package report provides rendering of metrics reports as markdown or JSON.
 package report
 
 import (
@@ -7,6 +8,7 @@ import (
 	"github.com/dakaneye/org-pulse/internal/metrics"
 )
 
+// RenderMarkdown formats a Report as a human-readable markdown document.
 func RenderMarkdown(r metrics.Report) string {
 	var b strings.Builder
 

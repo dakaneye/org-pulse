@@ -6,12 +6,14 @@ import (
 	"github.com/dakaneye/org-pulse/internal/github"
 )
 
+// ReviewerLoad holds the review count and share of total reviews for one reviewer.
 type ReviewerLoad struct {
 	Reviewer string
 	Count    int
 	Percent  float64
 }
 
+// ReviewLoad returns per-reviewer review counts and percentages, sorted descending by count.
 func ReviewLoad(prs []github.PullRequest) []ReviewerLoad {
 	counts := make(map[string]int)
 	total := 0

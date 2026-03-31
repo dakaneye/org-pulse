@@ -96,6 +96,7 @@ query($owner: String!, $repo: String!, $cursor: String) {
   }
 }`
 
+// FetchPullRequests returns all non-draft pull requests for the given repo updated after since.
 func FetchPullRequests(ctx context.Context, owner, repo string, since time.Time) ([]PullRequest, error) {
 	var all []PullRequest
 	var cursor string

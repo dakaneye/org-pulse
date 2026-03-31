@@ -6,11 +6,13 @@ import (
 	"github.com/dakaneye/org-pulse/internal/github"
 )
 
+// RepoCI holds CI failure rate data for a single repository.
 type RepoCI struct {
 	Repo string
 	CIRate
 }
 
+// Report holds all computed metrics for an org pulse report.
 type Report struct {
 	Org       string
 	RepoCount int
@@ -30,9 +32,8 @@ type Report struct {
 	RepoCIRates             []RepoCI
 }
 
-func ComputeReport(org string, data []github.RepoData, now time.Time, weeks int, staleThreshold float64) Report {
-	windowStart := now.AddDate(0, 0, -7*weeks)
-
+// ComputeReport aggregates all metrics across the given repo data.
+func ComputeReport(org string, data []github.RepoData, now time.Time, windowStart time.Time, weeks int, staleThreshold float64) Report {
 	var allPRs []github.PullRequest
 	for _, rd := range data {
 		allPRs = append(allPRs, rd.PullRequests...)
@@ -53,27 +54,23 @@ func ComputeReport(org string, data []github.RepoData, now time.Time, weeks int,
 	r.ReviewLoads = ReviewLoad(allPRs)
 	r.OrgCIRate = CIFailureRate(allPRs)
 
-	// Compute stale PRs per repo to avoid PR number collisions across repos
+	// Per-repo metrics: stale PRs and CI rates in a single pass
 	for _, rd := range data {
 		repoStale := StalePRs(rd.PullRequests, now, staleThreshold)
 		for i := range repoStale {
 			repoStale[i].Repo = rd.Repo.Name
 		}
 		r.StalePRs = append(r.StalePRs, repoStale...)
-	}
 
-	for _, rd := range data {
-		if len(rd.PullRequests) == 0 {
-			continue
+		if len(rd.PullRequests) > 0 {
+			rate := CIFailureRate(rd.PullRequests)
+			if rate.Total > 0 {
+				r.RepoCIRates = append(r.RepoCIRates, RepoCI{
+					Repo:   rd.Repo.Name,
+					CIRate: rate,
+				})
+			}
 		}
-		rate := CIFailureRate(rd.PullRequests)
-		if rate.Total == 0 {
-			continue
-		}
-		r.RepoCIRates = append(r.RepoCIRates, RepoCI{
-			Repo:   rd.Repo.Name,
-			CIRate: rate,
-		})
 	}
 
 	return r

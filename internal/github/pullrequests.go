@@ -65,25 +65,25 @@ type prNode struct {
 const prListQuery = `
 query($owner: String!, $repo: String!, $cursor: String) {
   repository(owner: $owner, name: $repo) {
-    pullRequests(first: 50, after: $cursor, orderBy: {field: UPDATED_AT, direction: DESC}) {
+    pullRequests(first: 25, after: $cursor, orderBy: {field: UPDATED_AT, direction: DESC}) {
       pageInfo { hasNextPage endCursor }
       nodes {
         number title
         author { login }
         state isDraft
         createdAt mergedAt closedAt updatedAt
-        reviews(first: 50) {
+        reviews(first: 25) {
           nodes { author { login } state submittedAt }
         }
-        reviewRequests(first: 20) {
+        reviewRequests(first: 10) {
           nodes { requestedReviewer { ... on User { login } } }
         }
         commits(last: 1) {
           nodes {
             commit {
-              checkSuites(first: 10) {
+              checkSuites(first: 5) {
                 nodes {
-                  checkRuns(first: 50) {
+                  checkRuns(first: 20) {
                     nodes { name status conclusion }
                   }
                 }

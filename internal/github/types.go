@@ -31,8 +31,7 @@ type Review struct {
 }
 
 type ReviewRequest struct {
-	Reviewer    string
-	RequestedAt time.Time
+	Reviewer string
 }
 
 type CheckRun struct {

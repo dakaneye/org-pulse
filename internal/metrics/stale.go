@@ -53,14 +53,10 @@ func classifyStale(pr github.PullRequest, now time.Time, threshold float64) (Sta
 	}
 
 	// Check review requested but no response
-	if len(pr.ReviewRequests) > 0 {
-		oldest := pr.ReviewRequests[0].RequestedAt
-		for _, rr := range pr.ReviewRequests[1:] {
-			if rr.RequestedAt.Before(oldest) {
-				oldest = rr.RequestedAt
-			}
-		}
-		age := BusinessDaysBetween(oldest, now)
+	// Use pr.CreatedAt as reference since GitHub GraphQL doesn't expose
+	// a timestamp on the ReviewRequest connection.
+	if len(pr.ReviewRequests) > 0 && len(pr.Reviews) == 0 {
+		age := BusinessDaysBetween(pr.CreatedAt, now)
 		if age >= threshold {
 			return StaleNoReviewResponse, age, true
 		}

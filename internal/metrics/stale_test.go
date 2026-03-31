@@ -18,10 +18,10 @@ func TestStalePRs(t *testing.T) {
 			Reviews: nil,
 		},
 		{
-			// Review requested 10+ business days ago, no response — stale
+			// Review requested, no reviews submitted, created 17+ bd ago — stale
 			Number: 2, State: "OPEN", CreatedAt: d(2026, 3, 5),
 			ReviewRequests: []github.ReviewRequest{
-				{Reviewer: "alice", RequestedAt: d(2026, 3, 13)},
+				{Reviewer: "alice"},
 			},
 		},
 		{

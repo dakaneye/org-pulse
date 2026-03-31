@@ -37,11 +37,11 @@ func main() {
 				return fmt.Errorf("--repos and --exclude-repos are mutually exclusive")
 			}
 
-			if err := github.CheckAuth(); err != nil {
+			ctx := cmd.Context()
+
+			if err := github.CheckAuth(ctx); err != nil {
 				return err
 			}
-
-			ctx := cmd.Context()
 			now := time.Now()
 			since := now.AddDate(0, 0, -7*weeks)
 
@@ -67,7 +67,6 @@ func main() {
 			g.SetLimit(concurrency)
 
 			for _, repo := range filtered {
-				repo := repo
 				g.Go(func() error {
 					prs, err := github.FetchPullRequests(gctx, repo.Owner, repo.Name, since)
 					if err != nil {
@@ -88,7 +87,7 @@ func main() {
 				return results[i].Repo.Name < results[j].Repo.Name
 			})
 
-			r := metrics.ComputeReport(org, results, now, weeks, 7)
+			r := metrics.ComputeReport(org, results, now, since, weeks, 7)
 
 			switch format {
 			case "json":

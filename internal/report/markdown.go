@@ -23,8 +23,8 @@ func RenderMarkdown(r metrics.Report) string {
 	b.WriteString("## Summary\n")
 	fmt.Fprintf(&b, "- PRs opened: %d | merged: %d | closed: %d\n",
 		r.Velocity.Opened, r.Velocity.Merged, r.Velocity.Closed)
-	fmt.Fprintf(&b, "- Median time-to-first-review: %.1f business days\n", r.MedianTimeToFirstReview)
-	fmt.Fprintf(&b, "- Median time-to-merge: %.1f business days\n", r.MedianTimeToMerge)
+	fmt.Fprintf(&b, "- Median time-to-first-review: %s\n", formatDuration(r.MedianTimeToFirstReview))
+	fmt.Fprintf(&b, "- Median time-to-merge: %s\n", formatDuration(r.MedianTimeToMerge))
 	fmt.Fprintf(&b, "- CI failure rate: %.1f%%\n\n", r.OrgCIRate.Rate)
 
 	// Review Load
@@ -74,4 +74,15 @@ func RenderMarkdown(r metrics.Report) string {
 	}
 
 	return b.String()
+}
+
+func formatDuration(businessDays float64) string {
+	if businessDays == 0 {
+		return "0 hours"
+	}
+	if businessDays < 1 {
+		hours := businessDays * 24
+		return fmt.Sprintf("%.1f hours", hours)
+	}
+	return fmt.Sprintf("%.1f business days", businessDays)
 }

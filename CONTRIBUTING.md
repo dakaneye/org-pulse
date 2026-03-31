@@ -3,17 +3,15 @@
 ## Development
 
 ```bash
-git clone https://github.com/dakaneye/org-pulse.git
-cd org-pulse
-go build ./...
-go test ./...
+git clone https://github.com/dakaneye/REPO.git
+cd REPO
 ```
 
 ## Before Submitting
 
-1. `go build ./...` passes
-2. `go test -race ./...` passes
-3. `go vet ./...` clean
+1. Build passes
+2. Lint passes
+3. Tests pass
 4. New functionality has tests
 
 ## Pull Requests

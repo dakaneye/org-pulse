@@ -41,7 +41,6 @@ jobs:
         uses: dakaneye/hookshot/release-pilot@1b43157bc205516bdb653ebeccdb7ef7079bb19d
         with:
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
-          draft: ${{ contains(github.ref_name, '-') }}
 
       - name: Upload artifacts
         env:

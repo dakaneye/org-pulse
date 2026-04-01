@@ -21,29 +21,13 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Build binaries
-        run: |
-          set -Eeuo pipefail
-          version="${GITHUB_REF_NAME#v}"
-          for os in linux darwin; do
-            for arch in amd64 arm64; do
-              output="dist/org-pulse_${version}_${os}_${arch}"
-              mkdir -p "$output"
-              GOOS="$os" GOARCH="$arch" CGO_ENABLED=0 \
-                go build -ldflags="-s -w" -o "$output/org-pulse" .
-              cp LICENSE README.md "$output/"
-              tar -czf "$output.tar.gz" -C dist "org-pulse_${version}_${os}_${arch}"
-            done
-          done
-          sha256sum dist/*.tar.gz > dist/checksums.txt
+      - name: Install GoReleaser
+        uses: goreleaser/goreleaser-action@ec59f474b9834571250b370d4735c50f8e2d1e29 # v7.0.0
+        with:
+          install-only: true
 
       - name: Create release
         uses: dakaneye/hookshot/release-pilot@1b43157bc205516bdb653ebeccdb7ef7079bb19d
         with:
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
           args: --tag ${{ github.ref_name }}
-
-      - name: Upload artifacts
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload "$GITHUB_REF_NAME" dist/*.tar.gz dist/checksums.txt --clobber
